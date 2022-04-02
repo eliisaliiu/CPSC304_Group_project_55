@@ -16,23 +16,23 @@ public class ReservationModel {
     private final String reservationDate;
     private final String checkInDate;
     private final String checkOutDate;
-    private final RoomModel roomModel;
-    private final CustomerModel customerModel;
-    private final HotelModel hotelModel;
-    private final InvoiceModel invoiceModel;
-    private final EventModel eventModel;
-    private final FacilityModel facilityModel;
+    private final int roomID;
+    private final int customerID;
+    private final int hotelID;
+    private final int invoiceID;
+    private final int eventID;
+    private final int facilityID;
 
     public ReservationModel(int reservationID,
                             String reservationDate,
                             String checkInDate,
                             String checkOutDate,
-                            RoomModel roomModel,
-                            CustomerModel customerModel,
-                            HotelModel hotelModel,
-                            InvoiceModel invoiceModel,
-                            FacilityModel facilityModel,
-                            EventModel eventModel){
+                            int roomID,
+                            int customerID,
+                            int hotelID,
+                            int invoiceID,
+                            int facilityID,
+                            int eventID){
 
         //RoomModel roomModel = new RoomModel();
 
@@ -40,12 +40,12 @@ public class ReservationModel {
         this.reservationDate = reservationDate;
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
-        this.roomModel = roomModel;
-        this.customerModel = customerModel;
-        this.hotelModel = hotelModel;
-        this.invoiceModel = invoiceModel;
-        this.eventModel = eventModel;
-        this.facilityModel = facilityModel;
+        this.roomID = roomID;
+        this.customerID = customerID;
+        this.hotelID = hotelID;
+        this.invoiceID = invoiceID;
+        this.eventID = eventID;
+        this.facilityID = facilityID;
     }
 
     public int getReservationID() {
@@ -64,27 +64,27 @@ public class ReservationModel {
         return checkOutDate;
     }
 
-    public RoomModel getRoomModel() {
-        return roomModel;
+    public int getCustomerID() {
+        return customerID;
     }
 
-    public HotelModel getHotelModel() {
-        return hotelModel;
+    public int getHotelID() {
+        return hotelID;
     }
 
-    public CustomerModel getCustomerModel() {
-        return customerModel;
+    public int getEventID() {
+        return eventID;
     }
 
-    public InvoiceModel getInvoiceModel() {
-        return invoiceModel;
+    public int getFacilityID() {
+        return facilityID;
     }
 
-    public EventModel getEventModel() {
-        return eventModel;
+    public int getInvoiceID() {
+        return invoiceID;
     }
 
-    public FacilityModel getFacilityModel() {
-        return facilityModel;
+    public int getRoomID() {
+        return roomID;
     }
 }
