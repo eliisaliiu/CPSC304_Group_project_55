@@ -8,6 +8,8 @@ import ca.ubc.cs304.model.ReservationModel;
 import ca.ubc.cs304.ui.LoginWindow;
 import ca.ubc.cs304.ui.TerminalTransactions;
 
+
+
 public class HotelManagement  implements LoginWindowDelegate, ReservationDelegate {
 
     private DatabaseConnectionHandler dbHandler = null;
@@ -23,9 +25,6 @@ public class HotelManagement  implements LoginWindowDelegate, ReservationDelegat
     }
 
 
-
-
-
     @Override
     public void login(String username, String password) {
         boolean didConnect = dbHandler.login(username, password);
@@ -35,7 +34,6 @@ public class HotelManagement  implements LoginWindowDelegate, ReservationDelegat
             loginWindow.dispose();
 
             TerminalTransactions transaction = new TerminalTransactions();
-            transaction.setupDatabase(this);
             transaction.showMainMenu(this);
         } else {
             loginWindow.handleLoginFailed();
@@ -49,22 +47,11 @@ public class HotelManagement  implements LoginWindowDelegate, ReservationDelegat
     }
 
     @Override
-    public void databaseSetup() {
-        dbHandler.databaseSetup();
-    }
-
-    @Override
     public void deleteReservation(int reservationID) {
 
     }
-
     @Override
     public void insertReservation(ReservationModel reservationModel) {
-
-    }
-
-    @Override
-    public void showReservation() {
 
     }
 
@@ -89,16 +76,34 @@ public class HotelManagement  implements LoginWindowDelegate, ReservationDelegat
     public InvoiceModel[] aggregateMostExpensiveInvoice() {
         return dbHandler.aggregateMostExpensiveInvoice();
     }
+
+
     @Override
-    public void showInvoiceBranch(InvoiceModel[] models) {
+    public void showInvoiceTable(InvoiceModel[] models) {
         for (int i = 0; i < models.length; i++) {
             InvoiceModel model = models[i];
-            // simplified output formatting; truncation may occur
             System.out.printf("%-10.10s", model.getInvoiceNumber());
-            System.out.printf("%-20.20s", model.getPaymentNumber());
+            System.out.printf("PaymentNumber%-20.20s", model.getPaymentNumber());
+            System.out.printf("CustomerID%-20.20s", model.getCustomerID());
             System.out.println();
         }
     }
+
+    @Override
+    public InvoiceModel[] selectionInvoice(int value, String operator, String columnName) {
+        return dbHandler.selectionInvoice(value, operator, columnName);
+    }
+
+    @Override
+    public String[] projectionReservation(String columnName) {
+        return dbHandler.projectionReservation(columnName);
+    }
+
+    @Override
+    public String[] divisionCustomersUsingAllServices() {
+        return dbHandler.divisionCustomersUsingAllServices();
+    }
+
 
     public static void main(String[] args) {
         HotelManagement hotelManagement = new HotelManagement();

@@ -3,6 +3,7 @@ package ca.ubc.cs304.ui;
 import ca.ubc.cs304.delegates.ReservationDelegate;
 import ca.ubc.cs304.delegates.TerminalTransactionsDelegate;
 import ca.ubc.cs304.model.BranchModel;
+import ca.ubc.cs304.model.InvoiceModel;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,32 +28,6 @@ public class TerminalTransactions {
 	 * Sets up the database to have a branch table with two tuples so we can insert/update/delete from it.
 	 * Refer to the databaseSetup.sql file to determine what tuples are going to be in the table.
 	 */
-	public void setupDatabase(ReservationDelegate delegate) {
-		this.delegate = delegate;
-		
-		bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-		int choice = INVALID_INPUT;
-		
-		while(choice != 1 && choice != 2) {
-			System.out.println("If you have a table called Branch in your database (capitialization of the name does not matter), it will be dropped and a new Branch table will be created.\nIf you want to proceed, enter 1; if you want to quit, enter 2.");
-			
-			choice = readInteger(false);
-			
-			if (choice != INVALID_INPUT) {
-				switch (choice) {
-				case 1:  
-					delegate.databaseSetup(); 
-					break;
-				case 2:  
-					handleQuitOption();
-					break;
-				default:
-					System.out.println(WARNING_TAG + " The number that you entered was not a valid option.\n");
-					break;
-				}
-			}
-		}
-	}
 
 	/**
 	 * Displays simple text interface
@@ -65,9 +40,12 @@ public class TerminalTransactions {
 		
 		while (choice != 5) {
 			System.out.println();
-			System.out.println("1. Join Option");
-			System.out.println("2. Aggregate branch");
-			System.out.println("5. Quit");
+			System.out.println("1. Join");
+			System.out.println("2. Aggregate");
+			System.out.println("3. Division");
+			System.out.println("4. Projection on Reservation");
+			System.out.println("5. Selection on Invoice");
+			System.out.println("6. Quit");
 			System.out.print("Please choose one of the above  options: ");
 
 			choice = readInteger(false);
@@ -77,12 +55,21 @@ public class TerminalTransactions {
 			if (choice != INVALID_INPUT) {
 				switch (choice) {
 				case 1:
-					handleJoinOption();
+					handleJoin();
 					break;
 				case 2:  
-					handleAggregateOption();
+					handleAggregate();
+					break;
+				case 3:
+					handleDivision();
+					break;
+				case 4:
+					handleProjection();
 					break;
 				case 5:
+					handleSelection();
+					break;
+				case 6:
 					handleQuitOption();
 					break;
 				default:
@@ -146,7 +133,6 @@ public class TerminalTransactions {
 	*/
 	private void handleQuitOption() {
 		System.out.println("Good Bye!");
-		
 		if (bufferedReader != null) {
 			try {
 				bufferedReader.close();
@@ -157,14 +143,61 @@ public class TerminalTransactions {
 		
 		delegate.reservationFinished();
 	}
-	private void handleJoinOption(){
+	private void handleJoin(){
 		delegate.joinMailsofCustomersMoreThanOneWeek();
 	}
 
-	private void handleAggregateOption(){
-
-		delegate.showInvoiceBranch(delegate.aggregateMostExpensiveInvoice());
+	private void handleAggregate(){
+		delegate.showInvoiceTable(delegate.aggregateMostExpensiveInvoice());
 	}
+
+	private void  handleSelection(){
+		//TODO: Take inputs from GUI to pass this method
+		int value = INVALID_INPUT;
+		while (value == INVALID_INPUT) {
+			System.out.print("Please enter value you wish to compare: ");
+			value = readInteger(false);
+		}
+		String operator = null;
+		while (operator == null || operator.length() <= 0) {
+			System.out.print("Please enter the operator: ");
+			operator = readLine().trim();
+		}
+		String columnName = null;
+		while (columnName == null || columnName.length() <= 0) {
+			System.out.print("Please enter the columnName: ");
+			columnName = readLine().trim();
+		}
+		InvoiceModel[] models = delegate.selectionInvoice(value,operator,columnName);
+		delegate.showInvoiceTable(models);
+	}
+
+	private void handleProjection(){
+		String columnName = null;
+		while (columnName == null || columnName.length() <= 0) {
+			System.out.print("Please enter the columnName: ");
+			columnName = readLine().trim();
+		}
+
+		String[] columnValues = delegate.projectionReservation(columnName);
+		System.out.println(columnName);
+		System.out.println("--------------------------------------");
+		for(String value : columnValues){
+			System.out.println(value);
+		}
+	}
+
+	private void handleDivision(){
+		String[] list = delegate.joinMailsofCustomersMoreThanOneWeek();
+		//System.out.println("customerID");
+		//System.out.println("--------------------------------------");
+		//for(String value : list){
+		//	System.out.println(value);
+		//}
+
+	}
+
+
  	/*
 	private void handleUpdateOption() {
 		int id = INVALID_INPUT;

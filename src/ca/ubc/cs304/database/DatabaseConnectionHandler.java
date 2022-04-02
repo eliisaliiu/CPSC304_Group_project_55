@@ -64,7 +64,7 @@ public class DatabaseConnectionHandler {
 	}
 
 
-	public InvoiceModel[] aggregateMostExpensiveInvoice(){
+	public InvoiceModel[]  aggregateMostExpensiveInvoice(){
 			ArrayList<InvoiceModel> result = new ArrayList<InvoiceModel>();
 		try{
 			String query = "SELECT * FROM INVOICE WHERE INVOICEAMOUNT = (SELECT  MAX(INVOICEAMOUNT) FROM  INVOICE)";
@@ -94,7 +94,7 @@ public class DatabaseConnectionHandler {
 		 return result.toArray(new InvoiceModel[result.size()]);
 	}
 
-
+	//return no table makes sense string[]
 	public String[] joinMailsofCustomersMoreThanOneWeek(){
 		ArrayList<String> result = new ArrayList<String>();
 		try{
@@ -115,7 +115,7 @@ public class DatabaseConnectionHandler {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
 			rollbackConnection();
 		}
-		return result.toArray(new String[0]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	public InvoiceModel[] selectionInvoice(int value, String operator, String columnName) {
@@ -132,6 +132,7 @@ public class DatabaseConnectionHandler {
 			PrintablePreparedStatement ps = new PrintablePreparedStatement(connection.prepareStatement(query), query, false);
 			ResultSet rs = ps.executeQuery();
 			DBTablePrinter.printResultSet(rs);
+
 			while(rs.next()){
 				InvoiceModel model = new InvoiceModel(
 						rs.getInt("invoiceNumber"),
@@ -144,6 +145,7 @@ public class DatabaseConnectionHandler {
 						rs.getInt("paymentNumber")
 				);
 				result.add(model);
+
 			}
 
 			ps.close();
@@ -155,6 +157,7 @@ public class DatabaseConnectionHandler {
 		return result.toArray(new InvoiceModel[result.size()]);
 	}
 
+	//return no table makes sense string[]
 	public String[] projectionReservation(String columnName){
 		//Columnname: one of the columns of Customer table
 		// we need selection box not string box
@@ -163,7 +166,7 @@ public class DatabaseConnectionHandler {
 			String query = "SELECT " + columnName + " FROM RESERVATION";
 			PrintablePreparedStatement ps = new PrintablePreparedStatement(connection.prepareStatement(query), query, false);
 			ResultSet rs = ps.executeQuery();
-			DBTablePrinter.printResultSet(rs);
+			//DBTablePrinter.printResultSet(rs);
 			while(rs.next()){
 				result.add(rs.getString(columnName));
 			}
@@ -175,9 +178,12 @@ public class DatabaseConnectionHandler {
 		return result.toArray(new String[result.size()]);
 	}
 
+
+	//return no table makes sense string[]
 	public String[] divisionCustomersUsingAllServices(){
 		ArrayList<String> result = new ArrayList<String>();
 		try{
+
 			String query = "SELECT c.CUSTOMERID FROM CUSTOMER c WHERE NOT EXISTS((SELECT s.serviceID FROM HOTELSERVICES s) MINUS (SELECT a.serviceID FROM INVOICE a WHERE a.CUSTOMERID = c.CUSTOMERID and a.SERVICEID IS NOT NULL))";
 			PrintablePreparedStatement ps = new PrintablePreparedStatement(connection.prepareStatement(query), query,false);
 			ResultSet rs = ps.executeQuery();
@@ -327,7 +333,7 @@ public void showInvoiceBranch(InvoiceModel[] models) {
 	}
 }
 
-
+/*
 	public static void main(String args[]) {
 		DatabaseConnectionHandler dbhandler = new DatabaseConnectionHandler();
 		dbhandler.login("ora_emres", "a62827258");
@@ -342,5 +348,6 @@ public void showInvoiceBranch(InvoiceModel[] models) {
 
 
 	}
+ */
 }
 
