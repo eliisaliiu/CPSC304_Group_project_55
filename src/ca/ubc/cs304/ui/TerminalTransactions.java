@@ -1,5 +1,6 @@
 package ca.ubc.cs304.ui;
 
+import ca.ubc.cs304.delegates.ReservationDelegate;
 import ca.ubc.cs304.delegates.TerminalTransactionsDelegate;
 import ca.ubc.cs304.model.BranchModel;
 
@@ -17,7 +18,7 @@ public class TerminalTransactions {
 	private static final int EMPTY_INPUT = 0;
 	
 	private BufferedReader bufferedReader = null;
-	private TerminalTransactionsDelegate delegate = null;
+	private ReservationDelegate delegate = null;
 
 	public TerminalTransactions() {
 	}
@@ -26,7 +27,7 @@ public class TerminalTransactions {
 	 * Sets up the database to have a branch table with two tuples so we can insert/update/delete from it.
 	 * Refer to the databaseSetup.sql file to determine what tuples are going to be in the table.
 	 */
-	public void setupDatabase(TerminalTransactionsDelegate delegate) {
+	public void setupDatabase(ReservationDelegate delegate) {
 		this.delegate = delegate;
 		
 		bufferedReader = new BufferedReader(new InputStreamReader(System.in));
@@ -56,7 +57,7 @@ public class TerminalTransactions {
 	/**
 	 * Displays simple text interface
 	 */ 
-	public void showMainMenu(TerminalTransactionsDelegate delegate) {
+	public void showMainMenu(ReservationDelegate delegate) {
 		this.delegate = delegate;
 		
 	    bufferedReader = new BufferedReader(new InputStreamReader(System.in));
@@ -64,12 +65,10 @@ public class TerminalTransactions {
 		
 		while (choice != 5) {
 			System.out.println();
-			System.out.println("1. Insert branch");
-			System.out.println("2. Delete branch");
-			System.out.println("3. Update branch name");
-			System.out.println("4. Show branch");
+			System.out.println("1. Join Option");
+			System.out.println("2. Aggregate branch");
 			System.out.println("5. Quit");
-			System.out.print("Please choose one of the above 5 options: ");
+			System.out.print("Please choose one of the above  options: ");
 
 			choice = readInteger(false);
 
@@ -77,17 +76,11 @@ public class TerminalTransactions {
 
 			if (choice != INVALID_INPUT) {
 				switch (choice) {
-				case 1:  
-					handleInsertOption(); 
+				case 1:
+					handleJoinOption();
 					break;
 				case 2:  
-					handleDeleteOption(); 
-					break;
-				case 3: 
-					handleUpdateOption();
-					break;
-				case 4:  
-					delegate.showBranch(); 
+					handleAggregateOption();
 					break;
 				case 5:
 					handleQuitOption();
@@ -99,7 +92,7 @@ public class TerminalTransactions {
 			}
 		}		
 	}
-	
+	/*
 	private void handleDeleteOption() {
 		int branchId = INVALID_INPUT;
 		while (branchId == INVALID_INPUT) {
@@ -150,7 +143,7 @@ public class TerminalTransactions {
 											phoneNumber);
 		delegate.insertBranch(model);
 	}
-	
+	*/
 	private void handleQuitOption() {
 		System.out.println("Good Bye!");
 		
@@ -162,9 +155,17 @@ public class TerminalTransactions {
 			}
 		}
 		
-		delegate.terminalTransactionsFinished();
+		delegate.reservationFinished();
 	}
-	
+	private void handleJoinOption(){
+		delegate.joinMailsofCustomersMoreThanOneWeek();
+	}
+
+	private void handleAggregateOption(){
+
+		delegate.showInvoiceBranch(delegate.aggregateMostExpensiveInvoice());
+	}
+ 	/*
 	private void handleUpdateOption() {
 		int id = INVALID_INPUT;
 		while (id == INVALID_INPUT) {
@@ -180,7 +181,7 @@ public class TerminalTransactions {
 
 		delegate.updateBranch(id, name);
 	}
-	
+	 */
 	private int readInteger(boolean allowEmpty) {
 		String line = null;
 		int input = INVALID_INPUT;
@@ -208,4 +209,5 @@ public class TerminalTransactions {
 		}
 		return result;
 	}
+
 }

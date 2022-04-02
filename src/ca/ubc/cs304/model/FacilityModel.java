@@ -1,7 +1,5 @@
 package ca.ubc.cs304.model;
 
-import com.sun.media.sound.FFT;
-
 
 /**
  * The intent for this class is to update/store information about a single facility

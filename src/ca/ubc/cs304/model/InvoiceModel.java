@@ -8,23 +8,30 @@ public class InvoiceModel {
     private final int invoiceNumber;
     private final double invoiceAmount;
     private final String invoiceDate;
-    private final ReservationModel reservationModel;
-    private final HotelServiceModel hotelServiceModel;
-    private final PaymentModel paymentModel;
+    private final int customerID;
+    private final int hotelID;
+    private final int serviceID;
+    private final int facilityID;
+    private final int paymentNumber;
 
     public InvoiceModel(int invoiceNumber,
                         double invoiceAmount,
                         String invoiceDate,
-                        ReservationModel reservationModel,
-                        HotelServiceModel hotelServiceModel,
-                        PaymentModel paymentModel){
+                        int customerID,
+                        int hotelID,
+                        int serviceID,
+                        int facilityID,
+                        int paymentNumber
+                        ){
 
         this.invoiceNumber = invoiceNumber;
         this.invoiceAmount = invoiceAmount;
         this.invoiceDate = invoiceDate;
-        this.hotelServiceModel = hotelServiceModel;
-        this.reservationModel = reservationModel;
-        this.paymentModel = paymentModel;
+        this.customerID = customerID;
+        this.hotelID = hotelID;
+        this.serviceID = serviceID;
+        this.facilityID = facilityID;
+        this.paymentNumber = paymentNumber;
     }
 
     public int getInvoiceNumber() {
@@ -39,15 +46,37 @@ public class InvoiceModel {
         return invoiceDate;
     }
 
-    public ReservationModel getReservationModel() {
-        return reservationModel;
+    public int getCustomerID() {
+        return customerID;
     }
 
-    public HotelServiceModel getHotelServiceModel() {
-        return hotelServiceModel;
+    public int getFacilityID() {
+        return facilityID;
     }
 
-    public PaymentModel getPaymentModel() {
-        return paymentModel;
+    public int getPaymentNumber() {
+        return paymentNumber;
+    }
+
+    public int getHotelID() {
+        return hotelID;
+    }
+
+    public int getServiceID() {
+        return serviceID;
+    }
+
+    @Override
+    public String toString() {
+        return "InvoiceModel{" +
+                "invoiceNumber=" + invoiceNumber +
+                ", invoiceAmount=" + invoiceAmount +
+                ", invoiceDate='" + invoiceDate + '\'' +
+                ", customerID=" + customerID +
+                ", hotelID=" + hotelID +
+                ", serviceID=" + serviceID +
+                ", facilityID=" + facilityID +
+                ", paymentNumber=" + paymentNumber +
+                '}';
     }
 }
