@@ -8,7 +8,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * This class handles all database related transactions
@@ -42,6 +41,44 @@ public class DatabaseConnectionHandler {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
 		}
 	}
+
+	public void insertReservation(ReservationModel model) {
+		try {
+			String query = "INSERT INTO Reservation VALUES (?,?,?,?,?,?,?,?,?,?)";
+			PrintablePreparedStatement ps = new PrintablePreparedStatement(connection.prepareStatement(query), query, false);
+			ps.setInt(1, model.getReservationID());
+			ps.setString(2, model.getReservationDate());
+			ps.setString(3, model.getCheckInDate());
+			ps.setString(4, model.getCheckOutDate());
+			if (model.getRoomNo() == 0) {
+				ps.setNull(5, java.sql.Types.INTEGER);
+			} else {
+				ps.setInt(5, model.getRoomNo());
+			}
+			ps.setInt(6,model.getCustomerID());
+			ps.setInt(7,model.getHotelID());
+			ps.setInt(8,model.getInvoiceNumber());
+			if (model.getEventID() == 0) {
+				ps.setNull(9, java.sql.Types.INTEGER);
+			} else {
+				ps.setInt(9, model.getEventID());
+			}
+			if (model.getFacilityID() == 0) {
+				ps.setNull(10, java.sql.Types.INTEGER);
+			} else {
+				ps.setInt(10, model.getFacilityID());
+			}
+
+			ps.executeUpdate();
+			connection.commit();
+
+			ps.close();
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			rollbackConnection();
+		}
+	}
+
 
 	public void deleteCustomer(int customer_ID) {
 		try {
@@ -95,7 +132,7 @@ public class DatabaseConnectionHandler {
 	}
 
 	//return no table makes sense string[]
-	public String[] joinMailsofCustomersMoreThanOneWeek(){
+	public String[] joinMailsOfCustomersMoreThanOneWeek(){
 		ArrayList<String> result = new ArrayList<String>();
 		try{
 			String query = "SELECT DISTINCT s.CUSTOMEREMAIL  " +
@@ -201,79 +238,28 @@ public class DatabaseConnectionHandler {
 		return result.toArray(new String[result.size()]);
 	}
 
-	public void databaseSetup() {}
-	/*
-	public void insertInvoice(InvoiceModel model) {
+	public void databaseSetup() {
+		dropBranchTableIfExists();
 		try {
-			String query = "INSERT INTO INVOICE VALUES (?,?,?,?,?)";
+			//Path file = Paths.get("src/ca/ubc/cs304","sql/scripts/databaseSetup.sql");
+			//String query = Files.readString(file);
+			String query = "CREATE TABLE Reservation (reservationID INTEGER NOT NULL, reservationDate DATE NOT NULL, checkInDate DATE NOT NULL, checkOutDate DATE NOT NULL, roomNo INTEGER, customerID INTEGER NOT NULL, hotelID INTEGER NOT NULL, invoiceNumber INTEGER NOT NULL, eventID INTEGER, facilityID INTEGER, PRIMARY KEY(reservationID),UNIQUE (customerID, hotelID, invoiceNumber), FOREIGN KEY (customerID) REFERENCES Customer, FOREIGN KEY (hotelID) REFERENCES Hotel, FOREIGN KEY (invoiceNumber) REFERENCES Invoice, FOREIGN KEY (eventID) REFERENCES Events, FOREIGN KEY (facilityID) REFERENCES Facility )";
 			PrintablePreparedStatement ps = new PrintablePreparedStatement(connection.prepareStatement(query), query, false);
-			ps.setInt(1, model.getId());
-			ps.setString(2, model.getName());
-			ps.setString(3, model.getAddress());
-			ps.setString(4, model.getCity());
-			if (model.getPhoneNumber() == 0) {
-				ps.setNull(5, java.sql.Types.INTEGER);
-			} else {
-				ps.setInt(5, model.getPhoneNumber());
-			}
-
 			ps.executeUpdate();
-			connection.commit();
-
-			ps.close();
-		} catch (SQLException e) {
-			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-			rollbackConnection();
-		}
-	}
-
-	public BranchModel[] getBranchInfo() {
-		ArrayList<BranchModel> result = new ArrayList<BranchModel>();
-
-		try {
-			String query = "SELECT * FROM branch";
-			PrintablePreparedStatement ps = new PrintablePreparedStatement(connection.prepareStatement(query), query, false);
-			ResultSet rs = ps.executeQuery();
-
-			while(rs.next()) {
-				BranchModel model = new BranchModel(rs.getString("branch_addr"),
-						rs.getString("branch_city"),
-						rs.getInt("branch_id"),
-						rs.getString("branch_name"),
-						rs.getInt("branch_phone"));
-				result.add(model);
-			}
-
-			rs.close();
 			ps.close();
 		} catch (SQLException e) {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
 		}
 
-		return result.toArray(new BranchModel[result.size()]);
+		ReservationModel reservation1 = new ReservationModel(123,"TO_DATE('2022-10-30','YYYY-MM-DD')","DATE('2022-10-30')","TO_DATE('2022-10-30','YYYY-MM-DD')",123,54321,12345,98765,5678,1234);
+		insertReservation(reservation1);
+
+		ReservationModel reservation2 = new ReservationModel(1234,"TO_DATE('2022-10-30','YYYY-MM-DD')","TO_DATE('2022-10-30','YYYY-MM-DD')","TO_DATE('2022-10-30','YYYY-MM-DD')",0,543213,123456,98766,0,0);
+		insertReservation(reservation1);
+
+
+
 	}
-
-	public void updateBranch(int id, String name) {
-		try {
-			String query = "UPDATE branch SET branch_name = ? WHERE branch_id = ?";
-			PrintablePreparedStatement ps = new PrintablePreparedStatement(connection.prepareStatement(query), query, false);
-			ps.setString(1, name);
-			ps.setInt(2, id);
-
-			int rowCount = ps.executeUpdate();
-			if (rowCount == 0) {
-				System.out.println(WARNING_TAG + " Branch " + id + " does not exist!");
-			}
-
-			connection.commit();
-
-			ps.close();
-		} catch (SQLException e) {
-			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-			rollbackConnection();
-		}
-	}
-*/
 	public boolean login(String username, String password) {
 		try {
 			if (connection != null) {
@@ -298,9 +284,8 @@ public class DatabaseConnectionHandler {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
 		}
 	}
-////////////////
 
-/*
+
 	private void dropBranchTableIfExists() {
 		try {
 			String query = "select table_name from user_tables";
@@ -308,8 +293,8 @@ public class DatabaseConnectionHandler {
 			ResultSet rs = ps.executeQuery();
 
 			while(rs.next()) {
-				if(rs.getString(1).toLowerCase().equals("branch")) {
-					ps.execute("DROP TABLE branch");
+				if(rs.getString(1).equalsIgnoreCase("Reservation")) {
+					ps.execute("DROP TABLE Reservation");
 					break;
 				}
 			}
@@ -320,19 +305,18 @@ public class DatabaseConnectionHandler {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
 		}
 	}
- */
 
 	//TODO: MODIFY PRINT FUNCTION
 	//TODO: SQL FILE IF EXISTS PART BROKEN
-public void showInvoiceBranch(InvoiceModel[] models) {
-	for (int i = 0; i < models.length; i++) {
-		InvoiceModel model = models[i];
-		// simplified output formatting; truncation may occur
-		System.out.printf("%-10.10s", model.getInvoiceNumber());
-		System.out.printf("%-20.20s", model.getPaymentNumber());
-		System.out.println();
+	public void showInvoiceBranch(InvoiceModel[] models) {
+		for (int i = 0; i < models.length; i++) {
+			InvoiceModel model = models[i];
+			// simplified output formatting; truncation may occur
+			System.out.printf("%-10.10s", model.getInvoiceNumber());
+			System.out.printf("%-20.20s", model.getPaymentNumber());
+			System.out.println();
+		}
 	}
-}
 
 /*
 	public static void main(String args[]) {
