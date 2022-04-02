@@ -123,12 +123,13 @@ public class DatabaseConnectionHandler {
 		ArrayList<InvoiceModel> result = new ArrayList<InvoiceModel>();
 		try {
 			String query;
-			if(operator == "less"){
+			if(operator.equals("less")){
 				query = "SELECT * FROM INVOICE WHERE " + columnName + " < " + value;
-			}else if(operator == "bigger"){
+			}else if(operator.equals("bigger")){
 				query = "SELECT * FROM INVOICE WHERE " + columnName + " > " + value;
 			}else
 				query = "SELECT * FROM INVOICE WHERE " + columnName + " = " + value;
+
 			PrintablePreparedStatement ps = new PrintablePreparedStatement(connection.prepareStatement(query), query, false);
 			ResultSet rs = ps.executeQuery();
 			DBTablePrinter.printResultSet(rs);
