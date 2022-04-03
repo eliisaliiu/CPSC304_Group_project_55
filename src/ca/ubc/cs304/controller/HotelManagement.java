@@ -39,8 +39,8 @@ public class HotelManagement  implements LoginWindowDelegate, ReservationDelegat
             hotelManagementGUI.showFrame(this);
 
 
-//            TerminalTransactions transaction = new TerminalTransactions();
-//            transaction.showMainMenu(this);
+            TerminalTransactions transaction = new TerminalTransactions();
+            transaction.showMainMenu(this);
         } else {
             loginWindow.handleLoginFailed();
 
