@@ -318,21 +318,22 @@ public class DatabaseConnectionHandler {
 		}
 	}
 
-/*
+
 	public static void main(String args[]) {
 		DatabaseConnectionHandler dbhandler = new DatabaseConnectionHandler();
 		dbhandler.login("ora_emres", "a62827258");
 
-		dbhandler.joinMailsofCustomersMoreThanOneWeek();
+		dbhandler.joinMailsOfCustomersMoreThanOneWeek();
 		dbhandler.aggregateMostExpensiveInvoice();
 		dbhandler.showInvoiceBranch(dbhandler.selectionInvoice(13, "equal","HOTELID"));
 		for(String part: dbhandler.divisionCustomersUsingAllServices()) {
 			System.out.println(part);
 		}
 		dbhandler.projectionReservation("reservationID");
+		ReservationModel reservation1 = new ReservationModel(123,"2022-10-30","2022-10-30","2022-10-30",123,54321,12345,98765,5678,1234);
+		dbhandler.insertReservation(reservation1);
 
 
 	}
- */
 }
 

@@ -5,6 +5,7 @@ import ca.ubc.cs304.delegates.LoginWindowDelegate;
 import ca.ubc.cs304.delegates.ReservationDelegate;
 import ca.ubc.cs304.model.InvoiceModel;
 import ca.ubc.cs304.model.ReservationModel;
+import ca.ubc.cs304.ui.HotelManagementGUI;
 import ca.ubc.cs304.ui.LoginWindow;
 import ca.ubc.cs304.ui.TerminalTransactions;
 
@@ -14,6 +15,7 @@ public class HotelManagement  implements LoginWindowDelegate, ReservationDelegat
 
     private DatabaseConnectionHandler dbHandler = null;
     private LoginWindow loginWindow = null;
+    private HotelManagementGUI hotelManagementGUI = null;
 
     public HotelManagement() {
         dbHandler = new DatabaseConnectionHandler();
@@ -22,6 +24,7 @@ public class HotelManagement  implements LoginWindowDelegate, ReservationDelegat
     private void start() {
         loginWindow = new LoginWindow();
         loginWindow.showFrame(this);
+
     }
 
 
@@ -32,9 +35,12 @@ public class HotelManagement  implements LoginWindowDelegate, ReservationDelegat
         if (didConnect) {
             // Once connected, remove login window and start text transaction flow
             loginWindow.dispose();
+            hotelManagementGUI = new HotelManagementGUI();
+            hotelManagementGUI.showFrame(this);
 
-            TerminalTransactions transaction = new TerminalTransactions();
-            transaction.showMainMenu(this);
+
+//            TerminalTransactions transaction = new TerminalTransactions();
+//            transaction.showMainMenu(this);
         } else {
             loginWindow.handleLoginFailed();
 
