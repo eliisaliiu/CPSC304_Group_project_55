@@ -35,12 +35,12 @@ public class HotelManagement  implements LoginWindowDelegate, ReservationDelegat
         if (didConnect) {
             // Once connected, remove login window and start text transaction flow
             loginWindow.dispose();
-            hotelManagementGUI = new HotelManagementGUI();
-            hotelManagementGUI.showFrame(this);
+//            hotelManagementGUI = new HotelManagementGUI();
+//            hotelManagementGUI.showFrame(this);
 
 
-//            TerminalTransactions transaction = new TerminalTransactions();
-//            transaction.showMainMenu(this);
+            TerminalTransactions transaction = new TerminalTransactions();
+            transaction.showMainMenu(this);
         } else {
             loginWindow.handleLoginFailed();
 
@@ -114,6 +114,17 @@ public class HotelManagement  implements LoginWindowDelegate, ReservationDelegat
     @Override
     public String[] divisionCustomersUsingAllServices() {
         return dbHandler.divisionCustomersUsingAllServices();
+    }
+
+    /**
+     * TerminalTransactionsDelegate Implementation
+     *
+     * The TerminalTransaction instance tells us that the user is fine with dropping any existing table
+     * called branch and creating a new one for this project to use
+     */
+    public void databaseSetup() {
+        dbHandler.databaseSetup();;
+
     }
 
 
