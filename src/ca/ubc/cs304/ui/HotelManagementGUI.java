@@ -198,7 +198,7 @@ public class HotelManagementGUI extends JFrame {
         });
     }
 
-    private void initializeNestedAggregateQueryButton(){
+    private void initializeNestedAggregateQueryButton() {
         nestedAggregateQueryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
