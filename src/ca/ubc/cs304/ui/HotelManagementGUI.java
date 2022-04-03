@@ -15,11 +15,9 @@ public class HotelManagementGUI extends JFrame {
     private static final int HEIGHT = 500;
 
     private ReservationDelegate delegate;
-    private DBTablePrinter tablePrinter;
 
     private JPanel topPanel;
     private JPanel bottomPanel;
-    private JList jlist;
     private JScrollPane pane;
 
 
@@ -31,7 +29,6 @@ public class HotelManagementGUI extends JFrame {
     private JButton projectionQueryButton;
     private JButton selectionQueryButton;
     private JButton updateQueryButton;
-    private JButton insertQueryButton;
     private JButton deleteQueryButton;
     private JButton nestedAggregateQueryButton;
 
@@ -96,6 +93,7 @@ public class HotelManagementGUI extends JFrame {
         setTopPanel();
         frame.add(topPanel);
         setBottomPanel();
+        frame.add(bottomPanel);
     }
 
 
@@ -104,6 +102,11 @@ public class HotelManagementGUI extends JFrame {
         initializeJoinQueryButton();
         initializeAggregateQuery();
         initializeDivisionQueryButton();
+        initializeDeleteQueryButton();
+        initializeSelectionQueryButton();
+        initializeUpdateQueryButton();
+        initializeNestedAggregateQueryButton();
+        initializeProjectionQueryButton();
     }
 
 
@@ -112,20 +115,18 @@ public class HotelManagementGUI extends JFrame {
         insertReservationButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String reservationID = JOptionPane.showInputDialog(jlist,"Enter a reservationId: ");
-//                String reservationDate = JOptionPane.showInputDialog(jlist,"Enter a reservation date: ");
-//                String checkInDate = JOptionPane.showInputDialog(jlist,"Enter a check in date: ");
-//                String checkOutDate = JOptionPane.showInputDialog(jlist,"Enter a check out date: ");
-//                String roomNo = JOptionPane.showInputDialog(jlist,"Enter a roomNo: ");
-//                String customerID = JOptionPane.showInputDialog(jlist,"Enter a customer ID: ");
-//                String hotelID = JOptionPane.showInputDialog(jlist,"Enter a hotel ID: ");
-//                String invoiceNumber = JOptionPane.showInputDialog(jlist,"Enter a invoice Number: ");
-//                String eventID = JOptionPane.showInputDialog(jlist,"Enter a eventID: ");
+                String reservationID = JOptionPane.showInputDialog(pane,"Enter a reservationId: ");
+                String reservationDate = JOptionPane.showInputDialog(pane,"Enter a reservation date: ");
+                String checkInDate = JOptionPane.showInputDialog(pane,"Enter a check in date: ");
+                String checkOutDate = JOptionPane.showInputDialog(pane,"Enter a check out date: ");
+                String roomNo = JOptionPane.showInputDialog(pane,"Enter a roomNo: ");
+                String customerID = JOptionPane.showInputDialog(pane,"Enter a customer ID: ");
+                String hotelID = JOptionPane.showInputDialog(pane,"Enter a hotel ID: ");
+                String invoiceNumber = JOptionPane.showInputDialog(pane,"Enter a invoice Number: ");
+                String eventID = JOptionPane.showInputDialog(pane,"Enter a eventID: ");
 
                 ReservationModel model = new ReservationModel(Integer.parseInt(reservationID),"2020-10-20","2020-11-25","2020-11-26",300,73648,13,92847563,0,0);
                 delegate.insertReservation(model);
-
-
 
 
             }
@@ -136,7 +137,7 @@ public class HotelManagementGUI extends JFrame {
         joinQueryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                delegate.joinMailsofCustomersMoreThanOneWeek();
             }
         });
     }
@@ -145,7 +146,7 @@ public class HotelManagementGUI extends JFrame {
         aggregateQueryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                delegate.showInvoiceTable(delegate.aggregateMostExpensiveInvoice());
             }
         });
     }
@@ -154,7 +155,64 @@ public class HotelManagementGUI extends JFrame {
         divisionQueryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                String[] list = delegate.divisionCustomersUsingAllServices();
+            }
+        });
+    }
 
+    private void initializeDeleteQueryButton() {
+        deleteQueryButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String reservationID = JOptionPane.showInputDialog(pane,"Please enter the event ID you wish to delete: ");
+
+                ReservationModel model = new ReservationModel(Integer.parseInt(reservationID),"2020-10-20","2020-11-25","2020-11-26",300,73648,13,92847563,0,0);
+                delegate.deleteReservation(model.getReservationID());
+            }
+        });
+    }
+
+    private void initializeSelectionQueryButton(){
+        selectionQueryButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String value = JOptionPane.showInputDialog("Please enter value you wish to compare: ");
+                String operator = JOptionPane.showInputDialog("Please enter the operator: ");
+                String columnName = JOptionPane.showInputDialog("Please enter the columnName: ");
+
+                delegate.showInvoiceTable(delegate.aggregateMostExpensiveInvoice());
+            }
+        });
+    }
+
+    private void initializeUpdateQueryButton(){
+        updateQueryButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String id = JOptionPane.showInputDialog("Please enter the hotel ID you wish to update: ");
+                String type = JOptionPane.showInputDialog(("Please enter the hotel name you wish to update: "));
+                String name = JOptionPane.showInputDialog(("Please enter the hotel name you wish to update: "));
+
+                delegate.updateHotel(Integer.parseInt(id), type, name);
+            }
+        });
+    }
+
+    private void initializeNestedAggregateQueryButton(){
+        nestedAggregateQueryButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                delegate.nestedAggregationInvoice();
+            }
+        });
+    }
+
+    private void initializeProjectionQueryButton(){
+        projectionQueryButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String columnName = JOptionPane.showInputDialog("Please enter the columnName: ");
+                delegate.projectionReservation(columnName);
             }
         });
     }

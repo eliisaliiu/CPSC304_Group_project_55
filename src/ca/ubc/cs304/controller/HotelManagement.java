@@ -35,12 +35,12 @@ public class HotelManagement  implements LoginWindowDelegate, ReservationDelegat
         if (didConnect) {
             // Once connected, remove login window and start text transaction flow
             loginWindow.dispose();
-//            hotelManagementGUI = new HotelManagementGUI();
-//            hotelManagementGUI.showFrame(this);
+            hotelManagementGUI = new HotelManagementGUI();
+            hotelManagementGUI.showFrame(this);
 
 
-            TerminalTransactions transaction = new TerminalTransactions();
-            transaction.showMainMenu(this);
+//            TerminalTransactions transaction = new TerminalTransactions();
+//            transaction.showMainMenu(this);
         } else {
             loginWindow.handleLoginFailed();
 
