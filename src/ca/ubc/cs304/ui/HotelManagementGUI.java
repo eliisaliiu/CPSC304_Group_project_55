@@ -1,7 +1,9 @@
 package ca.ubc.cs304.ui;
 
+import ca.ubc.cs304.DBTablePrinter;
 import ca.ubc.cs304.delegates.ReservationDelegate;
 import ca.ubc.cs304.model.ReservationModel;
+//import jdk.javadoc.internal.doclets.formats.html.markup.Table;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,14 +15,26 @@ public class HotelManagementGUI extends JFrame {
     private static final int HEIGHT = 500;
 
     private ReservationDelegate delegate;
+    private DBTablePrinter tablePrinter;
 
     private JPanel topPanel;
     private JPanel bottomPanel;
     private JList jlist;
+    private JScrollPane pane;
 
 
     private JFrame frame;
     private JButton insertReservationButton;
+    private JButton joinQueryButton;
+    private JButton aggregateQueryButton;
+    private JButton divisionQueryButton;
+    private JButton projectionQueryButton;
+    private JButton selectionQueryButton;
+    private JButton updateQueryButton;
+    private JButton insertQueryButton;
+    private JButton deleteQueryButton;
+    private JButton nestedAggregateQueryButton;
+
 
     public HotelManagementGUI() {
         super("Hotel Management Database");
@@ -37,7 +51,16 @@ public class HotelManagementGUI extends JFrame {
     private void initializeFields() {
         topPanel = new JPanel();
         bottomPanel = new JPanel();
+        pane = new JScrollPane();
         insertReservationButton = new JButton("Insert Reservation");
+        joinQueryButton = new JButton("Join Query");
+        aggregateQueryButton = new JButton("Aggregate Query");
+        divisionQueryButton = new JButton("Division Query");
+        projectionQueryButton = new JButton("Projection on Reservation");
+        selectionQueryButton = new JButton("Selection on Invoice");
+        updateQueryButton = new JButton("Update on Hotel");
+        deleteQueryButton = new JButton("Delete on Reservation");
+        nestedAggregateQueryButton = new JButton("Nested Aggregation on Invoice");
 
 
     }
@@ -53,17 +76,34 @@ public class HotelManagementGUI extends JFrame {
 
     private void setTopPanel(){
         topPanel.add(insertReservationButton);
+        topPanel.add(deleteQueryButton);
+        topPanel.add(aggregateQueryButton);
+        topPanel.add(divisionQueryButton);
+        topPanel.add(projectionQueryButton);
+    }
+
+    private void setBottomPanel(){
+        bottomPanel.add(pane, BorderLayout.SOUTH);
+        bottomPanel.add(selectionQueryButton);
+        bottomPanel.add(updateQueryButton);
+        bottomPanel.add(joinQueryButton);
+        bottomPanel.add(nestedAggregateQueryButton);
+
     }
 
     private void setBothPanels() {
         frame.setLayout(new FlowLayout());
         setTopPanel();
         frame.add(topPanel);
+        setBottomPanel();
     }
 
 
     private void initializeUserInteraction() {
         initializedInsertButton();
+        initializeJoinQueryButton();
+        initializeAggregateQuery();
+        initializeDivisionQueryButton();
     }
 
 
@@ -84,6 +124,36 @@ public class HotelManagementGUI extends JFrame {
 
                 ReservationModel model = new ReservationModel(Integer.parseInt(reservationID),"2020-10-20","2020-11-25","2020-11-26",300,73648,13,92847563,0,0);
                 delegate.insertReservation(model);
+
+
+
+
+            }
+        });
+    }
+
+    private void initializeJoinQueryButton(){
+        joinQueryButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+    }
+
+    private void initializeAggregateQuery(){
+        aggregateQueryButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+    }
+
+    private void initializeDivisionQueryButton(){
+        divisionQueryButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
 
             }
         });
