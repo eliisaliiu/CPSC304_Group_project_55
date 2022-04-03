@@ -31,6 +31,7 @@ public class HotelManagementGUI extends JFrame {
         frame = this;
         initializeFields();
         initializeGraphics();
+        initializeUserInteraction();
     }
 
     private void initializeFields() {
@@ -61,6 +62,11 @@ public class HotelManagementGUI extends JFrame {
     }
 
 
+    private void initializeUserInteraction() {
+        initializedInsertButton();
+    }
+
+
 
     private void initializedInsertButton(){
         insertReservationButton.addActionListener(new ActionListener() {
@@ -77,13 +83,7 @@ public class HotelManagementGUI extends JFrame {
 //                String eventID = JOptionPane.showInputDialog(jlist,"Enter a eventID: ");
 
                 ReservationModel model = new ReservationModel(Integer.parseInt(reservationID),"2020-10-20","2020-11-25","2020-11-26",300,73648,13,92847563,0,0);
-
-
-
-
-
-
-
+                delegate.insertReservation(model);
 
             }
         });
