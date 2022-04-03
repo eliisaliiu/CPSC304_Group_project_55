@@ -3,11 +3,14 @@ package ca.ubc.cs304.database;
 import ca.ubc.cs304.model.*;
 import ca.ubc.cs304.util.PrintablePreparedStatement;
 import ca.ubc.cs304.DBTablePrinter;
+
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
 
 /**
  * This class handles all database related transactions
@@ -42,9 +45,10 @@ public class DatabaseConnectionHandler {
 		}
 	}
 
+
 	public void insertReservation(ReservationModel model) {
 		try {
-			String query = "INSERT INTO Reservation VALUES (?,?,?,?,?,?,?,?,?,?)";
+			String query = "INSERT INTO Reservation VALUES (?,TO_DATE(?,'YYYY-MM-DD'),TO_DATE(?,'YYYY-MM-DD'),TO_DATE(?,'YYYY-MM-DD'),?,?,?,?,?,?)";
 			PrintablePreparedStatement ps = new PrintablePreparedStatement(connection.prepareStatement(query), query, false);
 			ps.setInt(1, model.getReservationID());
 			ps.setString(2, model.getReservationDate());
@@ -79,18 +83,36 @@ public class DatabaseConnectionHandler {
 		}
 	}
 
-
-	public void deleteCustomer(int customer_ID) {
+	public void insertEvent(EventModel model) {
 		try {
-			String query = "DELETE FROM CUSTOMER WHERE CUSTOMERID = ?";
+			String query = "INSERT INTO EVENTS VALUES (?,?,?,?,TO_DATE(?,'YYYY-MM-DD'))";
 			PrintablePreparedStatement ps = new PrintablePreparedStatement(connection.prepareStatement(query), query, false);
-			ps.setInt(1, customer_ID);
+			ps.setInt(1, model.getEventID());
+			ps.setDouble(2, model.getEventQuota());
+			ps.setString(3,model.getEventType());
+			ps.setInt(4,model.getNumberOfGuests());
+			ps.setString(5, model.getDateAvailable());
+
+			ps.executeUpdate();
+			connection.commit();
+			ps.close();
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			rollbackConnection();
+		}
+	}
+
+	public void deleteReservation(int reservationID) {
+
+		try {
+			String query = "DELETE FROM RESERVATION WHERE RESERVATIONID = ?";
+			PrintablePreparedStatement ps = new PrintablePreparedStatement(connection.prepareStatement(query), query, false);
+			ps.setInt(1, reservationID);
 
 			int rowCount = ps.executeUpdate();
 			if (rowCount == 0) {
-				System.out.println(WARNING_TAG + " Customer " + customer_ID + " does not exist!");
+				System.out.println(WARNING_TAG + " Reservation with ID " + reservationID + " does not exist!");
 			}
-
 			connection.commit();
 
 			ps.close();
@@ -129,6 +151,23 @@ public class DatabaseConnectionHandler {
 			rollbackConnection();
 		}
 		 return result.toArray(new InvoiceModel[result.size()]);
+	}
+
+	// maximum average invoice comes from a particular customer
+	public void nestedAggregateInvoice(){
+		try {
+			String query = "SELECT MAX(avg) " +
+					"FROM " +
+					"(SELECT AVG(INVOICEAMOUNT) AS avg FROM INVOICE GROUP BY CUSTOMERID)";
+			PrintablePreparedStatement ps = new PrintablePreparedStatement(connection.prepareStatement(query), query, false);
+			ResultSet rs = ps.executeQuery();
+			DBTablePrinter.printResultSet(rs);
+			ps.close();
+			rs.close();
+	} catch (SQLException e) {
+		System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+		rollbackConnection();
+	}
 	}
 
 	//return no table makes sense string[]
@@ -238,53 +277,83 @@ public class DatabaseConnectionHandler {
 		return result.toArray(new String[result.size()]);
 	}
 
-	public void databaseSetup() {
-		dropBranchTableIfExists();
+
+	//TODO print statement change to reservation or add return string
+	public void updateHotel(int id, String hotelType, String hotelName) {
 		try {
-			//Path file = Paths.get("src/ca/ubc/cs304","sql/scripts/databaseSetup.sql");
-			//String query = Files.readString(file);
-			String query = "CREATE TABLE Reservation (reservationID INTEGER NOT NULL, reservationDate DATE NOT NULL, checkInDate DATE NOT NULL, checkOutDate DATE NOT NULL, roomNo INTEGER, customerID INTEGER NOT NULL, hotelID INTEGER NOT NULL, invoiceNumber INTEGER NOT NULL, eventID INTEGER, facilityID INTEGER, PRIMARY KEY(reservationID),UNIQUE (customerID, hotelID, invoiceNumber), FOREIGN KEY (customerID) REFERENCES Customer, FOREIGN KEY (hotelID) REFERENCES Hotel, FOREIGN KEY (invoiceNumber) REFERENCES Invoice, FOREIGN KEY (eventID) REFERENCES Events, FOREIGN KEY (facilityID) REFERENCES Facility )";
+			String query = "UPDATE HOTEL SET HOTELTYPE = \'" + hotelType + "\',HOTELNAME = \'" + hotelName + "\' WHERE HOTELID = " + id;
 			PrintablePreparedStatement ps = new PrintablePreparedStatement(connection.prepareStatement(query), query, false);
-			ps.executeUpdate();
+			int rowCount = ps.executeUpdate();
+			if (rowCount == 0) {
+				System.out.println(WARNING_TAG + " Hotel with ID:  " + id + " does not exist!");
+			}
+			connection.commit();
+			ps.close();
+
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+		}
+	}
+
+		public void databaseSetup () {
+		}
+	/*
+
+	public BranchModel[] getBranchInfo() {
+		ArrayList<BranchModel> result = new ArrayList<BranchModel>();
+
+		try {
+			String query = "SELECT * FROM branch";
+			PrintablePreparedStatement ps = new PrintablePreparedStatement(connection.prepareStatement(query), query, false);
+			ResultSet rs = ps.executeQuery();
+
+			while(rs.next()) {
+				BranchModel model = new BranchModel(rs.getString("branch_addr"),
+						rs.getString("branch_city"),
+						rs.getInt("branch_id"),
+						rs.getString("branch_name"),
+						rs.getInt("branch_phone"));
+				result.add(model);
+			}
+
+			rs.close();
 			ps.close();
 		} catch (SQLException e) {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
 		}
 
-		ReservationModel reservation1 = new ReservationModel(123,"TO_DATE('2022-10-30','YYYY-MM-DD')","DATE('2022-10-30')","TO_DATE('2022-10-30','YYYY-MM-DD')",123,54321,12345,98765,5678,1234);
-		insertReservation(reservation1);
-
-		ReservationModel reservation2 = new ReservationModel(1234,"TO_DATE('2022-10-30','YYYY-MM-DD')","TO_DATE('2022-10-30','YYYY-MM-DD')","TO_DATE('2022-10-30','YYYY-MM-DD')",0,543213,123456,98766,0,0);
-		insertReservation(reservation1);
-
-
-
+		return result.toArray(new BranchModel[result.size()]);
 	}
-	public boolean login(String username, String password) {
-		try {
-			if (connection != null) {
-				connection.close();
+
+
+*/
+
+		public boolean login (String username, String password){
+			try {
+				if (connection != null) {
+					connection.close();
+				}
+
+				connection = DriverManager.getConnection(ORACLE_URL, username, password);
+				connection.setAutoCommit(false);
+
+				System.out.println("\nConnected to Oracle!");
+				return true;
+			} catch (SQLException e) {
+				System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+				return false;
 			}
+		}
 
-			connection = DriverManager.getConnection(ORACLE_URL, username, password);
-			connection.setAutoCommit(false);
-
-			System.out.println("\nConnected to Oracle!");
-			return true;
-		} catch (SQLException e) {
-			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-			return false;
+		private void rollbackConnection() {
+			try {
+				connection.rollback();
+			} catch (SQLException e) {
+				System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			}
 		}
 	}
-
-	private void rollbackConnection() {
-		try  {
-			connection.rollback();
-		} catch (SQLException e) {
-			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-		}
-	}
-
+/*
 
 	private void dropBranchTableIfExists() {
 		try {
@@ -322,18 +391,33 @@ public class DatabaseConnectionHandler {
 	public static void main(String args[]) {
 		DatabaseConnectionHandler dbhandler = new DatabaseConnectionHandler();
 		dbhandler.login("ora_emres", "a62827258");
+		ReservationModel reservation1 = new ReservationModel(1111111111,"2020-10-20","2020-11-19","2020-11-20",300,73648,13,92847563,50,23453);
+		dbhandler.insertReservation(reservation1);
+		//dbhandler.deleteReservation(1111111111);
 
-		dbhandler.joinMailsOfCustomersMoreThanOneWeek();
+
+
+	}
+/*
+		DatabaseConnectionHandler dbhandler = new DatabaseConnectionHandler();
+		dbhandler.login("ora_emres", "a62827258");
+
+		dbhandler.joinMailsofCustomersMoreThanOneWeek();
 		dbhandler.aggregateMostExpensiveInvoice();
 		dbhandler.showInvoiceBranch(dbhandler.selectionInvoice(13, "equal","HOTELID"));
 		for(String part: dbhandler.divisionCustomersUsingAllServices()) {
 			System.out.println(part);
 		}
 		dbhandler.projectionReservation("reservationID");
-		ReservationModel reservation1 = new ReservationModel(123,"2022-10-30","2022-10-30","2022-10-30",123,54321,12345,98765,5678,1234);
-		dbhandler.insertReservation(reservation1);
+
+		EventModel e = new EventModel(1223, 245.00, "Party", 145, "2020-03-11");
+		dbhandler.insertEvent(e);
+
+		dbhandler.deleteEvent(123);
+		dbhandler.nestedAggregateInvoice();
 
 
 	}
-}
+*/
+
 

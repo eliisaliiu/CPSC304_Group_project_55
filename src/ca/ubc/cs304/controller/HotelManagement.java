@@ -53,24 +53,15 @@ public class HotelManagement  implements LoginWindowDelegate, ReservationDelegat
     }
 
     @Override
-    public void deleteReservation(int reservationID) {
-
-    }
-    @Override
-    public void insertReservation(ReservationModel reservationModel) {
-
-    }
-
-    @Override
-    public void updateReservation(int reservationID, String reservationDate) {
-
-    }
-
-    @Override
     public void reservationFinished() {
       dbHandler.close();
       dbHandler = null;
       System.exit(0);
+    }
+
+    @Override
+    public void updateHotel(int id, String type, String name) {
+        dbHandler.updateHotel(id, type, name);
     }
 
     @Override
@@ -83,6 +74,21 @@ public class HotelManagement  implements LoginWindowDelegate, ReservationDelegat
         return dbHandler.aggregateMostExpensiveInvoice();
     }
 
+
+    @Override
+    public void nestedAggregationInvoice() {
+        dbHandler.nestedAggregateInvoice();
+    }
+
+    @Override
+    public void deleteReservation(int reservationID) {
+        dbHandler.deleteReservation(reservationID);
+    }
+
+    @Override
+    public void insertReservation(ReservationModel reservationModel) {
+        dbHandler.insertReservation(reservationModel);
+    }
 
     @Override
     public void showInvoiceTable(InvoiceModel[] models) {
