@@ -82,6 +82,7 @@ public class DatabaseConnectionHandler {
 			rollbackConnection();
 		}
 	}
+
 	public void insertEvent(EventModel model) {
 		try {
 			String query = "INSERT INTO EVENTS VALUES (?,?,?,?,TO_DATE(?,'YYYY-MM-DD'))";
@@ -102,6 +103,7 @@ public class DatabaseConnectionHandler {
 	}
 
 	public void deleteReservation(int reservationID) {
+
 		try {
 			String query = "DELETE FROM RESERVATION WHERE RESERVATIONID = ?";
 			PrintablePreparedStatement ps = new PrintablePreparedStatement(connection.prepareStatement(query), query, false);
@@ -169,7 +171,7 @@ public class DatabaseConnectionHandler {
 	}
 
 	//return no table makes sense string[]
-	public String[] joinMailsofCustomersMoreThanOneWeek(){
+	public String[] joinMailsOfCustomersMoreThanOneWeek(){
 		ArrayList<String> result = new ArrayList<String>();
 		try{
 			String query = "SELECT DISTINCT s.CUSTOMEREMAIL  " +
@@ -275,6 +277,7 @@ public class DatabaseConnectionHandler {
 		return result.toArray(new String[result.size()]);
 	}
 
+
 	//TODO print statement change to reservation or add return string
 	public void updateHotel(int id, String hotelType, String hotelName) {
 		try {
@@ -289,12 +292,11 @@ public class DatabaseConnectionHandler {
 
 		} catch (SQLException e) {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-			rollbackConnection();
 		}
 	}
 
-
-	public void databaseSetup() {}
+		public void databaseSetup () {
+		}
 	/*
 
 	public BranchModel[] getBranchInfo() {
@@ -325,31 +327,34 @@ public class DatabaseConnectionHandler {
 
 
 */
-	public boolean login(String username, String password) {
-		try {
-			if (connection != null) {
-				connection.close();
+
+		public boolean login (String username, String password){
+			try {
+				if (connection != null) {
+					connection.close();
+				}
+
+				connection = DriverManager.getConnection(ORACLE_URL, username, password);
+				connection.setAutoCommit(false);
+
+				System.out.println("\nConnected to Oracle!");
+				return true;
+			} catch (SQLException e) {
+				System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+				return false;
 			}
-
-			connection = DriverManager.getConnection(ORACLE_URL, username, password);
-			connection.setAutoCommit(false);
-
-			System.out.println("\nConnected to Oracle!");
-			return true;
-		} catch (SQLException e) {
-			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-			return false;
 		}
-	}
 
-	private void rollbackConnection() {
-		try  {
-			connection.rollback();
-		} catch (SQLException e) {
-			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+		private void rollbackConnection() {
+			try {
+				connection.rollback();
+			} catch (SQLException e) {
+				System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			}
 		}
 	}
 /*
+
 	private void dropBranchTableIfExists() {
 		try {
 			String query = "select table_name from user_tables";
@@ -357,8 +362,8 @@ public class DatabaseConnectionHandler {
 			ResultSet rs = ps.executeQuery();
 
 			while(rs.next()) {
-				if(rs.getString(1).toLowerCase().equals("branch")) {
-					ps.execute("DROP TABLE branch");
+				if(rs.getString(1).equalsIgnoreCase("Reservation")) {
+					ps.execute("DROP TABLE Reservation");
 					break;
 				}
 			}
@@ -369,19 +374,18 @@ public class DatabaseConnectionHandler {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
 		}
 	}
- */
 
 	//TODO: MODIFY PRINT FUNCTION
 	//TODO: SQL FILE IF EXISTS PART BROKEN
-public void showInvoiceBranch(InvoiceModel[] models) {
-	for (int i = 0; i < models.length; i++) {
-		InvoiceModel model = models[i];
-		// simplified output formatting; truncation may occur
-		System.out.printf("%-10.10s", model.getInvoiceNumber());
-		System.out.printf("%-20.20s", model.getPaymentNumber());
-		System.out.println();
+	public void showInvoiceBranch(InvoiceModel[] models) {
+		for (int i = 0; i < models.length; i++) {
+			InvoiceModel model = models[i];
+			// simplified output formatting; truncation may occur
+			System.out.printf("%-10.10s", model.getInvoiceNumber());
+			System.out.printf("%-20.20s", model.getPaymentNumber());
+			System.out.println();
+		}
 	}
-}
 
 
 	public static void main(String args[]) {
@@ -415,5 +419,5 @@ public void showInvoiceBranch(InvoiceModel[] models) {
 
 	}
 */
-}
+
 

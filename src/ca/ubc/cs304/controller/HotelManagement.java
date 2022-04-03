@@ -60,7 +60,7 @@ public class HotelManagement  implements LoginWindowDelegate, ReservationDelegat
 
     @Override
     public String[] joinMailsofCustomersMoreThanOneWeek() {
-       return dbHandler.joinMailsofCustomersMoreThanOneWeek();
+       return dbHandler.joinMailsOfCustomersMoreThanOneWeek();
     }
 
     @Override
