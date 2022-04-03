@@ -1,14 +1,13 @@
 package ca.ubc.cs304.ui;
 
 import ca.ubc.cs304.delegates.ReservationDelegate;
-import ca.ubc.cs304.delegates.TerminalTransactionsDelegate;
-import ca.ubc.cs304.model.BranchModel;
+import ca.ubc.cs304.model.EventModel;
 import ca.ubc.cs304.model.InvoiceModel;
+import ca.ubc.cs304.model.ReservationModel;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
 /**
  * The class is only responsible for handling terminal text inputs. 
  */
@@ -20,14 +19,9 @@ public class TerminalTransactions {
 	
 	private BufferedReader bufferedReader = null;
 	private ReservationDelegate delegate = null;
-
 	public TerminalTransactions() {
 	}
 	
-	/**
-	 * Sets up the database to have a branch table with two tuples so we can insert/update/delete from it.
-	 * Refer to the databaseSetup.sql file to determine what tuples are going to be in the table.
-	 */
 
 	/**
 	 * Displays simple text interface
@@ -45,7 +39,11 @@ public class TerminalTransactions {
 			System.out.println("3. Division");
 			System.out.println("4. Projection on Reservation");
 			System.out.println("5. Selection on Invoice");
-			System.out.println("6. Quit");
+			System.out.println("6. Update on Hotel");
+			System.out.println("7. Insert on Reservation");
+			System.out.println("8. Delete on Reservation");
+			System.out.println("9. nestedAggregation on Invoice");
+			System.out.println("10. Quit");
 			System.out.print("Please choose one of the above  options: ");
 
 			choice = readInteger(false);
@@ -70,6 +68,18 @@ public class TerminalTransactions {
 					handleSelection();
 					break;
 				case 6:
+					handleUpdate();
+					break;
+				case 7:
+					handleInsertReservation();
+					break;
+				case 8:
+					handleDeleteReservation();
+					break;
+				case 9:
+					handleNestedAggregate();
+					break;
+				case 10:
 					handleQuitOption();
 					break;
 				default:
@@ -79,58 +89,74 @@ public class TerminalTransactions {
 			}
 		}		
 	}
-	/*
-	private void handleDeleteOption() {
-		int branchId = INVALID_INPUT;
-		while (branchId == INVALID_INPUT) {
-			System.out.print("Please enter the branch ID you wish to delete: ");
-			branchId = readInteger(false);
-			if (branchId != INVALID_INPUT) {
-				delegate.deleteBranch(branchId);
+
+	private void handleDeleteReservation() {
+		int reservationID = INVALID_INPUT;
+		while (reservationID == INVALID_INPUT) {
+			System.out.print("Please enter the event ID you wish to delete: ");
+			reservationID = readInteger(false);
+			if (reservationID != INVALID_INPUT) {
+				delegate.deleteReservation(reservationID);
 			}
 		}
 	}
-	
-	private void handleInsertOption() {
+
+	private void handleInsertReservation() {
 		int id = INVALID_INPUT;
 		while (id == INVALID_INPUT) {
-			System.out.print("Please enter the branch ID you wish to insert: ");
+			System.out.print("Please enter the Reservation ID you wish to insert: ");
 			id = readInteger(false);
 		}
-		
-		String name = null;
-		while (name == null || name.length() <= 0) {
-			System.out.print("Please enter the branch name you wish to insert: ");
-			name = readLine().trim();
+
+		String resDate = null;
+		while (resDate == null || resDate.length() <= 0) {
+			System.out.print("Please enter the reservation date you wish to insert in YYYY-MM-DD format:");
+			resDate = readLine().trim();
 		}
-		
-		// branch address is allowed to be null so we don't need to repeatedly ask for the address
-		System.out.print("Please enter the branch address you wish to insert: ");
-		String address = readLine().trim();
-		if (address.length() == 0) {
-			address = null;
+		String checkInDate = null;
+		while (checkInDate == null || checkInDate.length() <= 0) {
+			System.out.print("Please enter the checkin date you wish to insert in YYYY-MM-DD format:");
+			checkInDate = readLine().trim();
 		}
-		
-		String city = null;
-		while (city == null || city.length() <= 0) {
-			System.out.print("Please enter the branch city you wish to insert: ");
-			city = readLine().trim();
+		String checkOutDate = null;
+		while (checkOutDate == null || checkOutDate.length() <= 0) {
+			System.out.print("Please enter the checkout date you wish to insert in YYYY-MM-DD format:");
+			checkOutDate = readLine().trim();
 		}
-		
-		int phoneNumber = INVALID_INPUT;
-		while (phoneNumber == INVALID_INPUT) {
-			System.out.print("Please enter the branch phone number you wish to insert: ");
-			phoneNumber = readInteger(true);
+		int roomNo = INVALID_INPUT;
+		while (roomNo == INVALID_INPUT) {
+			System.out.print("Please enter the roomNo you wish to insert: Hint 300 ");
+			roomNo = readInteger(true);
 		}
-		
-		BranchModel model = new BranchModel(address,
-											city,
-											id,
-											name,
-											phoneNumber);
-		delegate.insertBranch(model);
+		int customerID = INVALID_INPUT;
+		while (customerID == INVALID_INPUT) {
+			System.out.print("Please enter the customerID number you wish to insert: Hint 73648 ");
+			customerID = readInteger(true);
+		}
+		int hotelID = INVALID_INPUT;
+		while (hotelID == INVALID_INPUT) {
+			System.out.print("Please enter the hotelID you wish to insert: Hint 13  ");
+			hotelID = readInteger(true);
+		}
+		int invoiceNumber = INVALID_INPUT;
+		while (invoiceNumber == INVALID_INPUT) {
+			System.out.print("Please enter the invoiceNumber you wish to insert: Hint 92847563 ");
+			invoiceNumber = readInteger(true);
+		}
+		int eventID = INVALID_INPUT;
+		while (eventID == INVALID_INPUT) {
+			System.out.print("Please enter the eventID you wish to insert: Hint 23453 ");
+			eventID = readInteger(true);
+		}
+		int facilityID = INVALID_INPUT;
+		while (facilityID == INVALID_INPUT) {
+			System.out.print("Please enter the facilityID you wish to insert: 50");
+			facilityID = readInteger(true);
+		}
+		ReservationModel model = new ReservationModel(id,resDate,checkInDate,checkOutDate,roomNo,customerID,hotelID,invoiceNumber,facilityID,eventID);
+		delegate.insertReservation(model);
 	}
-	*/
+
 	private void handleQuitOption() {
 		System.out.println("Good Bye!");
 		if (bufferedReader != null) {
@@ -143,8 +169,13 @@ public class TerminalTransactions {
 		
 		delegate.reservationFinished();
 	}
+
 	private void handleJoin(){
 		delegate.joinMailsofCustomersMoreThanOneWeek();
+	}
+
+	private void handleNestedAggregate(){
+		delegate.nestedAggregationInvoice();
 	}
 
 	private void handleAggregate(){
@@ -188,7 +219,7 @@ public class TerminalTransactions {
 	}
 
 	private void handleDivision(){
-		String[] list = delegate.joinMailsofCustomersMoreThanOneWeek();
+		String[] list = delegate.divisionCustomersUsingAllServices();
 		//System.out.println("customerID");
 		//System.out.println("--------------------------------------");
 		//for(String value : list){
@@ -197,24 +228,25 @@ public class TerminalTransactions {
 
 	}
 
-
- 	/*
-	private void handleUpdateOption() {
+	private void handleUpdate() {
 		int id = INVALID_INPUT;
 		while (id == INVALID_INPUT) {
-			System.out.print("Please enter the branch ID you wish to update: ");
+			System.out.print("Please enter the hotel ID you wish to update: ");
 			id = readInteger(false);
 		}
-		
+		String type = null;
+		while (type == null || type.length() <= 0) {
+			System.out.print("Please enter the hotel name you wish to update: ");
+			type = readLine().trim();
+		}
 		String name = null;
 		while (name == null || name.length() <= 0) {
-			System.out.print("Please enter the branch name you wish to update: ");
+			System.out.print("Please enter the hotel name you wish to update: ");
 			name = readLine().trim();
 		}
-
-		delegate.updateBranch(id, name);
+		delegate.updateHotel(id, type, name);
 	}
-	 */
+
 	private int readInteger(boolean allowEmpty) {
 		String line = null;
 		int input = INVALID_INPUT;

@@ -127,7 +127,7 @@ CREATE TABLE Invoice (
                          FOREIGN KEY (serviceID) REFERENCES HotelServices,
                          FOREIGN KEY (facilityID) REFERENCES Facility,
                          FOREIGN KEY (paymentNumber) REFERENCES Payment
-/*ON DELETE CASCADE*/
+
 );
 
 INSERT INTO Invoice VALUES (92847563,TO_DATE('2020-10-21','YYYY-MM-DD'),73648,13,3049.00,2938,null,192837);
@@ -158,7 +158,6 @@ CREATE TABLE Reservation (
      FOREIGN KEY (eventID) REFERENCES Events,
      FOREIGN KEY (facilityID) REFERENCES Facility,
      FOREIGN KEY (invoiceNumber) REFERENCES Invoice
-    /*ON DELETE CASCADE*/
 );
 
 INSERT INTO Reservation VALUES (1111111111, TO_DATE('2020-10-20','YYYY-MM-DD'), TO_DATE('2020-11-19','YYYY-MM-DD'), TO_DATE('2020-11-20','YYYY-MM-DD'),300,73648,13,92847563, null,null);
